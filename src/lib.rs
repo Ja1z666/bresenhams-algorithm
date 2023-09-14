@@ -67,7 +67,7 @@ impl Display {
         let mut err = delta.x - delta.y;
 
         loop {
-            self.set_pixel(current.x, current.y);
+            self.set_pixel(&current);
 
             if current.x == line.end.x && current.y == line.end.y {
                 break;
@@ -92,14 +92,38 @@ impl Display {
         let mut delta = 3 - 2 * circle.radius;
 
         while current.x <= current.y {
-            self.set_pixel(circle.position.x + current.x, circle.position.y + current.y);
-            self.set_pixel(circle.position.x - current.x, circle.position.y + current.y);
-            self.set_pixel(circle.position.x + current.x, circle.position.y - current.y);
-            self.set_pixel(circle.position.x - current.x, circle.position.y - current.y);
-            self.set_pixel(circle.position.x + current.y, circle.position.y + current.x);
-            self.set_pixel(circle.position.x - current.y, circle.position.y + current.x);
-            self.set_pixel(circle.position.x + current.y, circle.position.y - current.x);
-            self.set_pixel(circle.position.x - current.y, circle.position.y - current.x);
+            self.set_pixel(&Vector::new(
+                circle.position.x + current.x,
+                circle.position.y + current.y,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x - current.x,
+                circle.position.y + current.y,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x + current.x,
+                circle.position.y - current.y,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x - current.x,
+                circle.position.y - current.y,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x + current.y,
+                circle.position.y + current.x,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x - current.y,
+                circle.position.y + current.x,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x + current.y,
+                circle.position.y - current.x,
+            ));
+            self.set_pixel(&Vector::new(
+                circle.position.x - current.y,
+                circle.position.y - current.x,
+            ));
 
             if delta < 0 {
                 delta += 4 * current.x + 6;
@@ -112,9 +136,13 @@ impl Display {
         }
     }
 
-    fn set_pixel(&mut self, x: i32, y: i32) {
-        if x < SIZE as i32 && y < SIZE as i32 && x >= 0 && y >= 0 {
-            self.matrix[x as usize][y as usize] = Pixel::Filled;
+    fn set_pixel(&mut self, position: &Vector) {
+        if position.x < SIZE as i32
+            && position.y < SIZE as i32
+            && position.x >= 0
+            && position.y >= 0
+        {
+            self.matrix[position.x as usize][position.y as usize] = Pixel::Filled;
         }
     }
 
