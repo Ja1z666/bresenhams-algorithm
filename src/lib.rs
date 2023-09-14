@@ -1,4 +1,6 @@
-use colored::Colorize;
+pub const WHITE: &str = "\x1b[47m";
+pub const BLACK: &str = "\x1b[40m";
+pub const RESET: &str = "\x1b[0m";
 
 const SIZE: usize = 32;
 
@@ -8,13 +10,13 @@ pub struct Vector {
 }
 
 pub struct Line {
-    start: Vector,
-    end: Vector,
+    pub start: Vector,
+    pub end: Vector,
 }
 
 pub struct Circle {
-    position: Vector,
-    radius: i32,
+    pub position: Vector,
+    pub radius: i32,
 }
 
 impl Line {
@@ -111,15 +113,17 @@ impl Display {
     }
 
     fn set_pixel(&mut self, x: i32, y: i32) {
-        self.matrix[x as usize][y as usize] = Pixel::Filled;
+        if x < SIZE as i32 && y < SIZE as i32 && x >= 0 && y >= 0 {
+            self.matrix[x as usize][y as usize] = Pixel::Filled;
+        }
     }
 
     pub fn print(&self) {
         for x in 0..SIZE {
             for y in 0..SIZE {
                 match self.matrix[y][x] {
-                    Pixel::Empty => print!("{}", "  ".on_white()),
-                    Pixel::Filled => print!("{}", "  ".on_black()),
+                    Pixel::Empty => print!("{}  {}", WHITE, RESET),
+                    Pixel::Filled => print!("{}  {}", BLACK, RESET),
                 }
             }
             print!("\n");
