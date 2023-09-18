@@ -19,6 +19,11 @@ pub struct Circle {
     pub radius: i32,
 }
 
+pub struct Ellipse {
+    pub size: Vector,
+    pub position: Vector,
+}
+
 impl Line {
     pub fn new(start: Vector, end: Vector) -> Self {
         Line { start, end }
@@ -28,6 +33,12 @@ impl Line {
 impl Circle {
     pub fn new(position: Vector, radius: i32) -> Self {
         Circle { position, radius }
+    }
+}
+
+impl Ellipse {
+    pub fn new(size: Vector, position: Vector) -> Self {
+        Ellipse { size, position }
     }
 }
 
@@ -133,6 +144,83 @@ impl Display {
             }
 
             current.x += 1;
+        }
+    }
+
+    pub fn draw_ellipse(&mut self, ellipse: Ellipse) {
+        let mut current = Vector::new(0, ellipse.size.y);
+        let mut delta = Vector::new(
+            2 * ellipse.size.y * ellipse.size.y * current.x + ellipse.size.y * ellipse.size.y,
+            ellipse.size.y * ellipse.size.y * (current.x + 1) * (current.x + 1)
+                + ellipse.size.x * ellipse.size.x * (current.y - 1) * (current.y - 1)
+                - ellipse.size.x * ellipse.size.x * ellipse.size.y * ellipse.size.y,
+        );
+
+        while delta.x < ellipse.size.x * ellipse.size.x * (2 * current.y - 1) {
+            self.set_pixel(&Vector::new(
+                current.x + ellipse.position.x,
+                current.y + ellipse.position.y,
+            ));
+            self.set_pixel(&Vector::new(
+                -current.x + ellipse.position.x,
+                current.y + ellipse.position.y,
+            ));
+            self.set_pixel(&Vector::new(
+                current.x + ellipse.position.x,
+                -current.y + ellipse.position.y,
+            ));
+            self.set_pixel(&Vector::new(
+                -current.x + ellipse.position.x,
+                -current.y + ellipse.position.y,
+            ));
+
+            if delta.y <= 0 {
+                current.x += 1;
+                delta.x += 2 * ellipse.size.y * ellipse.size.y;
+                delta.y += 2 * ellipse.size.y * ellipse.size.y * (current.x + 1);
+            } else {
+                current.x += 1;
+                current.y -= 1;
+                delta.x += 2 * ellipse.size.y * ellipse.size.y;
+                delta.y += 2 * ellipse.size.y * ellipse.size.y * (current.x + 1)
+                    - 2 * ellipse.size.x * ellipse.size.x * (current.y - 1);
+            }
+        }
+
+        delta.y = ellipse.size.y
+            * ellipse.size.y
+            * (current.x as f32 + 0.5) as i32
+            * (current.x as f32 + 0.5) as i32
+            + ellipse.size.x * ellipse.size.x * (current.y - 1) * (current.y - 1)
+            - ellipse.size.x * ellipse.size.x * ellipse.size.y * ellipse.size.y;
+
+        while current.y >= 0 {
+            self.set_pixel(&Vector::new(
+                current.x + ellipse.position.x,
+                current.y + ellipse.position.y,
+            ));
+            self.set_pixel(&Vector::new(
+                -current.x + ellipse.position.x,
+                current.y + ellipse.position.y,
+            ));
+            self.set_pixel(&Vector::new(
+                current.x + ellipse.position.x,
+                -current.y + ellipse.position.y,
+            ));
+            self.set_pixel(&Vector::new(
+                -current.x + ellipse.position.x,
+                -current.y + ellipse.position.y,
+            ));
+
+            if delta.y > 0 {
+                current.y -= 1;
+                delta.y -= 2 * ellipse.size.x * ellipse.size.x * current.y;
+            } else {
+                current.y -= 1;
+                current.x += 1;
+                delta.y += 2 * ellipse.size.y * ellipse.size.y * current.x
+                    - 2 * ellipse.size.x * ellipse.size.x * current.y;
+            }
         }
     }
 

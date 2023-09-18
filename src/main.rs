@@ -1,11 +1,11 @@
-use bresenhams_algorithm::{Circle, Display, Line, Vector};
+use bresenhams_algorithm::{Circle, Display, Ellipse, Line, Vector};
 use dialoguer::{console::Term, theme::ColorfulTheme, Input, Select};
 
 fn main() {
     let mut display = Display::new();
 
     loop {
-        let items = ["Line", "Circle", "Exit"];
+        let items = ["Line", "Circle", "Ellipse", "Exit"];
         let selection = Select::with_theme(&ColorfulTheme::default())
             .items(&items)
             .default(0)
@@ -80,6 +80,46 @@ fn main() {
 
                     display.draw_circle(circle);
                 }
+                2 => {
+                    let mut ellipse = Ellipse::new(Vector::new(0, 0), Vector::new(0, 0));
+
+                    ellipse.size.x = Input::with_theme(&ColorfulTheme::default())
+                        .with_prompt("Ellipse size x: ")
+                        .default("0".to_string())
+                        .interact_text()
+                        .unwrap()
+                        .parse()
+                        .unwrap();
+
+                    ellipse.size.y = Input::with_theme(&ColorfulTheme::default())
+                        .with_prompt("Ellipse size y: ")
+                        .default("0".to_string())
+                        .interact_text()
+                        .unwrap()
+                        .parse()
+                        .unwrap();
+
+                    ellipse.position.x = Input::with_theme(&ColorfulTheme::default())
+                        .with_prompt("Ellipse position x: ")
+                        .default("0".to_string())
+                        .interact_text()
+                        .unwrap()
+                        .parse()
+                        .unwrap();
+
+                    ellipse.position.y = Input::with_theme(&ColorfulTheme::default())
+                        .with_prompt("Ellipse position y: ")
+                        .default("0".to_string())
+                        .interact_text()
+                        .unwrap()
+                        .parse()
+                        .unwrap();
+
+                    ellipse.size.x /= 2;
+                    ellipse.size.y /= 2;
+
+                    display.draw_ellipse(ellipse);
+                }
                 _ => break,
             },
             None => println!("Failed input"),
@@ -89,4 +129,3 @@ fn main() {
         println!();
     }
 }
-
